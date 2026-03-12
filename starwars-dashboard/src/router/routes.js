@@ -1,16 +1,10 @@
-const routes = [
-  {
-    path: '/',
-    component: () => import('layouts/MainLayout.vue'),
-    children: [{ path: '', component: () => import('pages/IndexPage.vue') }],
-  },
+import CharactersPage from 'src/pages/CharactersPage.vue'
 
-  // Always leave this as last one,
-  // but you can also remove it
-  {
-    path: '/:catchAll(.*)*',
-    component: () => import('pages/ErrorNotFound.vue'),
-  },
+const routes = [
+	{
+		path: "/",
+		component: CharactersPage
+	} 
 ]
 
 export default routes
