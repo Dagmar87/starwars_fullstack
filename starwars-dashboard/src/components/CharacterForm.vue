@@ -1,6 +1,6 @@
 <template>
 
-  <q-dialog v-model="dialog">
+  <q-dialog v-model="internalDialog">
 
     <q-card style="width:400px">
 
@@ -10,11 +10,11 @@
 
       <q-card-section>
 
-        <q-input v-model="character.name" label="Nome" />
-        <q-input v-model="character.height" label="Altura" />
-        <q-input v-model="character.mass" label="Peso" />
-        <q-input v-model="character.gender" label="Gênero" />
-        <q-input v-model="character.birth_year" label="Ano nascimento" />
+        <q-input v-model="localCharacter.name" label="Nome" />
+        <q-input v-model="localCharacter.height" label="Altura" />
+        <q-input v-model="localCharacter.mass" label="Peso" />
+        <q-input v-model="localCharacter.gender" label="Gênero" />
+        <q-input v-model="localCharacter.birth_year" label="Ano nascimento" />
 
       </q-card-section>
 
@@ -41,23 +41,52 @@
 </template>
 
 <script>
-import api from 'src/services/api';
+import api from '../services/api';
 
 export default {
 
 	props: ["dialog", "character"],
 
+  emits: ["update:dialog", "updated"],
+
+  data() {
+    return {
+      localCharacter: {}
+    }
+  },
+
+  computed: {
+    internalDialog: {
+      get() {
+        return this.dialog;
+      },
+      set(val) {
+        this.$emit("update:dialog", val);
+      }
+    }
+  },
+
+  watch: {
+    character: {
+      handler(newVal) {
+        this.localCharacter = { ...newVal };
+      },
+      immediate: true,
+      deep: true
+    }
+  },
+
 	methods: {
 
 		async save() {
 
-			if(this.character.id) {
+			if(this.localCharacter.id) {
 
-				await api.put(`/characters/${this.character.id}/`, this.character)
+				await api.put(`/characters/${this.localCharacter.id}/`, this.localCharacter)
 
 			} else {
 
-				await api.post("/characters/", this.character)
+				await api.post("/characters/", this.localCharacter)
 
 			}
 
